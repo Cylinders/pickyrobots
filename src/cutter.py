@@ -31,6 +31,8 @@ def n_cut(n: int, agents: list[T]) -> list[list[list[T]]]:
 
     return [cut]
 
+def up_to_n_cuts(n: int, agents: list[T]) -> list[list[list[T]]]:
+    return [n_cut(n, agents)[0] for n in range(1, n+1)]
 
 def epsilon_cut(epsilon: int, agents: list[T]) -> list[list[list[T]]]:
     return
