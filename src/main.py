@@ -9,7 +9,7 @@ from cutter import n_cut, up_to_n_cuts, no_cut
 from inference import infer
 from mapfaster_input_transform import encode_cuts
 from structs import Agent, Grid, GridPath
-
+import torch.nn.functional as F
 
 class Problem(NamedTuple):
     map: Grid
@@ -24,8 +24,8 @@ def minimal_paths_for(agents: list[Agent], map: Grid) -> dict[Agent, GridPath]:
 
 
 def main():
-    map = parse_map_from(Path("D:/dev/pickyrobots/originalmaps/Boston_0_256.map"))
-    scenario = parse_scenario_from(Path("D:/dev/pickyrobots/originalscen/scen-even/Boston_0_256-even-1.scen"))
+    map = parse_map_from(Path("..\maps\Boston_0_256.map"))
+    scenario = parse_scenario_from(Path("..\scenes\scen-even\Boston_0_256-even-20.scen"))
 
     p = Problem(map, scenario[:50])
     ccpd(p)
@@ -92,6 +92,7 @@ def ccpd(p: Problem):
     tensor: Tensor = encode_cuts(p.map, paths, batch_cuts)
 
     output = infer(tensor)
+    print(F.softmax(output))
 
     cut_to_output = associate_cut_outputs(batch_cuts, output)
 

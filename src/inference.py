@@ -1,5 +1,6 @@
 import torch
 from torch import Tensor
+import torch.nn.functional as F
 
 from model.mapfaster import MAPFASTER
 
@@ -43,3 +44,4 @@ def infer(tensor: Tensor):
 
     with torch.inference_mode():
         return model(x)
+        #return F.softmax(model(x)) # for softmaxing if wanted
