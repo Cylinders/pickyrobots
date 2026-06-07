@@ -1,6 +1,0 @@
-typing
-python-dotenv
-numpy
-torch
-opencv-python
-pathfinding
