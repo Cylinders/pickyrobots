@@ -6,6 +6,7 @@
 
 #include <limits.h>
 
+namespace conflictbasedsearch {
 
 LowLevelSolver::LowLevelSolver() = default;
 LowLevelSolver::~LowLevelSolver() = default;
@@ -289,3 +290,4 @@ std::vector<Cell> LowLevelSolver::solve(const std::vector<Constraint> &constrain
 }
 
 
+}

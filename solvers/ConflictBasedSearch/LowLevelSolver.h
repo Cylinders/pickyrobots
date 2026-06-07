@@ -5,6 +5,8 @@
 #include "TreeNode.h"
 #include "util.h"
 
+namespace conflictbasedsearch {
+
 class LowLevelSolver
 {
 private:
@@ -39,3 +41,4 @@ public:
 
 
 
+}

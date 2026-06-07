@@ -2,6 +2,8 @@
 #include "TreeNode.h"
 #include "util.h"
 
+namespace conflictbasedsearch {
+
 class HighLevelSolver
 {
 private:
@@ -19,3 +21,4 @@ public:
 	~HighLevelSolver();
 	static std::vector<std::vector<Cell>> solve(const Map &map);
 };
+}

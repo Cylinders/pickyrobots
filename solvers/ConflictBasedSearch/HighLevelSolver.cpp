@@ -4,9 +4,9 @@
 #include <climits>
 
 
+namespace conflictbasedsearch {
 HighLevelSolver::HighLevelSolver() = default;
 HighLevelSolver::~HighLevelSolver() = default;
-
 
 // Returns true if there is a conflict between two given routes
 bool HighLevelSolver::hasConflict(const std::vector<Cell> &route1, const std::vector<Cell> &route2) {
@@ -192,3 +192,4 @@ std::vector<std::vector<Cell>> HighLevelSolver::solve(const Map &map) {
 	return std::vector<std::vector<Cell>>();
 }
 
+}

@@ -1,5 +1,6 @@
 #include "TreeNode.h"
 
+namespace conflictbasedsearch{
 
 TreeNode::TreeNode() = default;
 TreeNode::~TreeNode() = default;
@@ -38,4 +39,5 @@ void TreeNode::updateCost() {
 		cost += route.size();
 	}
 	this->cost = cost;
+}
 }

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 
+namespace conflictbasedsearch {
 
 struct Cell {
 	bool isObstacle = false;
@@ -73,3 +74,4 @@ struct Map {
 };
 
 
+}

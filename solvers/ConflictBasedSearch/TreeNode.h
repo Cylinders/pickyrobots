@@ -2,6 +2,8 @@
 #include "LowLevelSolver.h"
 #include "util.h"
 
+namespace conflictbasedsearch {
+
 class TreeNode
 {
 private:
@@ -26,3 +28,4 @@ public:
 	~TreeNode();
 };
 
+}
