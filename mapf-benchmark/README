@@ -1,0 +1,10 @@
+brief setup (wsl2 nvidia)
+
+first time setup:
+follow instructions: https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_network
+download and
+> sudo apt-get install build-essential libopencv-dev cmake
+> cmake -B build
+
+build:
+> cmake --build build
