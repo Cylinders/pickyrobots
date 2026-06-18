@@ -2,6 +2,7 @@
 #include <queue>
 #include <random>
 #include <onnxruntime_cxx_api.h>
+#include <api.h>
 
 #include "agent.h"
 #include "grid.h"
@@ -13,29 +14,108 @@ std::unordered_map<Agent, std::vector<Pos> > find_minimal_paths(const Grid &grid
 
 std::vector<Agent> sample_n(const std::vector<Agent> &agents, std::size_t n);
 
+const std::filesystem::path tmp = "../tmp";
+
+void scip_tmp_copy(const std::filesystem::path &f1, const std::filesystem::path &f2);
+
+void scip_tmp_clear();
+
+const std::filesystem::path output = "../output";
+
+void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &problem) {
+    std::ofstream out(output / (problem.id + ".txt"));
+
+    out << problem.id << '\n';
+    out << "map: " << problem.map << std::endl;
+    const Grid map = parse_map_from(problem.map);
+
+    for (const auto &scenario_path: problem.scenarios) {
+        cout << "map: " << problem.map << ", scenario: " << scenario_path << std::endl;
+        out << "scenario: " << scenario_path << std::endl;
+        // const std::vector<Agent> scenario = sample_n(parse_scenario_from(scenario_path), 2);
+        const std::vector<Agent> scenario = parse_scenario_from(scenario_path);
+        const auto paths = find_minimal_paths(map, scenario);
+
+        auto valuation = valuator.evaluate({map, scenario, paths});
+
+        for (auto [solver, weight]: valuation) {
+            out << to_string(solver) << ":" << weight << "" << std::endl;
+        }
+
+        // cbs  1
+        std::cout << "starting cbs\n";
+        {
+            auto start = std::chrono::steady_clock::now();
+            auto solved = algorithmOne(problem.map, scenario_path, scenario.size());
+            auto end = std::chrono::steady_clock::now();
+            auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+            if (!solved) { out << "CBS failed." << std::endl; } else { out << "CBS took " << elapsed_ms << " ms" << std::endl; }
+        }
+
+        // cbsh 2
+        std::cout << "starting cbsh\n";
+        {
+            auto start = std::chrono::steady_clock::now();
+            auto solved = algorithmTwo(problem.map, scenario_path, scenario.size());
+            auto end = std::chrono::steady_clock::now();
+            auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+            if (!solved) { out << "CBSH failed." << std::endl; } else { out << "CBSH took " << elapsed_ms << " ms" << std::endl; }
+        }
+
+        // bcp  3
+        std::cout << "starting bcp\n";
+
+        {
+            scip_tmp_copy(problem.map, scenario_path);
+
+            auto start = std::chrono::steady_clock::now();
+            auto output = algorithmThree(60, std::filesystem::absolute(tmp / scenario_path.filename()));
+            auto end = std::chrono::steady_clock::now();
+
+            scip_tmp_clear();
+
+            auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            if (output.compare("-\n") == 0) {
+                out << "BCP failed." << std::endl;
+            } else {
+                out << "BCP took " << elapsed_ms << " ms" << std::endl;
+            }
+        }
+    }
+
+    out.close();
+}
+
 int main() {
     std::cout << "mapf benchmarker" << std::endl;
 
     MapfasterValuation valuator{"../data/model/None_dummy-93iq1npl.onnx"};
 
     const auto problems = parse_manifest("../data/problems/manifest.jsonl");
+    std::filesystem::create_directories(output);
 
-    for (const auto& problem : problems) {
-        std::cout << problem.id << '\n';
-        std::cout << "  map: " << problem.map << '\n';
-        const Grid map = parse_map_from(problem.map);
+    // warmup
+    for (int i = 0; i < 1; ++i) {
+        benchmark_problem(valuator, problems[0]);
+    }
 
-        for (const auto& scenario_path : problem.scenarios) {
-            std::cout << "  scenario: " << scenario_path << '\n';
-            const std::vector<Agent> scenario = sample_n(parse_scenario_from(scenario_path), 50);
-            const auto paths = find_minimal_paths(map, scenario);
+    for (const auto &problem: problems) {
+        benchmark_problem(valuator, problem);
+    }
+}
 
-            auto valuation = valuator.evaluate({ map, scenario, paths});
+void scip_tmp_copy(const std::filesystem::path &f1, const std::filesystem::path &f2) {
+    std::filesystem::create_directories(tmp);
 
-            for (auto [solver, weight] : valuation) {
-                std::cout << to_string(solver) << " " << weight << "\n";
-            }
-        }
+    std::filesystem::copy_file(f1, tmp / f1.filename(), std::filesystem::copy_options::overwrite_existing);
+    std::filesystem::copy_file(f2, tmp / f2.filename(), std::filesystem::copy_options::overwrite_existing);
+}
+
+void scip_tmp_clear() {
+    for (auto entry: std::filesystem::directory_iterator(tmp)) {
+        std::filesystem::remove(entry.path());
     }
 }
 

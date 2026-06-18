@@ -9,6 +9,7 @@ follow instructions: https://developer.nvidia.com/cuda-downloads?target_os=Linux
 
 first time setup:
 > sudo apt-get install build-essential libopencv-dev cmake nlohmann-json3-dev
+> sudo apt-get install libboost-all-dev sudo libreadline-dev
 > cmake -B build
 
 build:
