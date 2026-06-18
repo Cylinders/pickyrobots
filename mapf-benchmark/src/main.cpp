@@ -5,7 +5,9 @@
 
 #include "agent.h"
 #include "grid.h"
+#include "manifest.h"
 #include "mapfaster_encoder.h"
+#include "mapfaster_valuation.h"
 
 std::unordered_map<Agent, std::vector<Pos> > find_minimal_paths(const Grid &grid, const std::vector<Agent> &agents);
 
@@ -14,69 +16,26 @@ std::vector<Agent> sample_n(const std::vector<Agent> &agents, std::size_t n);
 int main() {
     std::cout << "mapf benchmarker" << std::endl;
 
-    const Grid map = parse_map_from("../data/8room_000.map");
-    dump_grid(std::cout, map);
+    MapfasterValuation valuator{"../data/model/None_dummy-93iq1npl.onnx"};
 
-    const std::vector<Agent> scenario = sample_n(parse_scenario_from("../data/8room_000.map.scen"), 50);
-    dump_scenario(std::cout, scenario);
+    const auto problems = parse_manifest("../data/problems/manifest.jsonl");
 
-    const auto paths = find_minimal_paths(map, scenario);
+    for (const auto& problem : problems) {
+        std::cout << problem.id << '\n';
+        std::cout << "  map: " << problem.map << '\n';
+        const Grid map = parse_map_from(problem.map);
 
-    auto input_buffer = mapfaster_encode(map, scenario, paths);
+        for (const auto& scenario_path : problem.scenarios) {
+            std::cout << "  scenario: " << scenario_path << '\n';
+            const std::vector<Agent> scenario = sample_n(parse_scenario_from(scenario_path), 50);
+            const auto paths = find_minimal_paths(map, scenario);
 
-    std::array<int64_t, 4> input_shape = {
-        1, 3, IMAGE_SIZE, IMAGE_SIZE
-    };
+            auto valuation = valuator.evaluate({ map, scenario, paths});
 
-    Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(
-        OrtArenaAllocator,
-        OrtMemTypeDefault
-    );
-
-    Ort::Value input_tensor = Ort::Value::CreateTensor<float>(
-        memory_info,
-        input_buffer.data(),
-        input_buffer.size(),
-        input_shape.data(),
-        input_shape.size()
-    );
-
-    Ort::Env env{ORT_LOGGING_LEVEL_WARNING, "mapfaster"};
-    Ort::SessionOptions session_options;
-    session_options.SetIntraOpNumThreads(1);
-
-    Ort::Session session{
-        env,
-        "../data/model/None_dummy-93iq1npl.onnx",
-        session_options
-    };
-
-    Ort::AllocatorWithDefaultOptions allocator;
-
-    auto input_name = session.GetInputNameAllocated(0, allocator);
-    auto output_name = session.GetOutputNameAllocated(0, allocator);
-
-    const char *input_names[] = {input_name.get()};
-    const char *output_names[] = {output_name.get()};
-
-    auto outputs = session.Run(
-        Ort::RunOptions{nullptr},
-        input_names,
-        &input_tensor,
-        1,
-        output_names,
-        1
-    );
-
-    float *y = outputs[0].GetTensorMutableData<float>();
-
-    auto output_info = outputs[0].GetTensorTypeAndShapeInfo();
-    std::vector<int64_t> output_shape = output_info.GetShape();
-
-    size_t output_count = output_info.GetElementCount();
-
-    for (size_t i = 0; i < output_count; ++i) {
-        std::cout << y[i] << '\n';
+            for (auto [solver, weight] : valuation) {
+                std::cout << to_string(solver) << " " << weight << "\n";
+            }
+        }
     }
 }
 

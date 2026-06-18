@@ -3,3 +3,6 @@ cmake-build-*/
 dump/
 .vscode/
 .idea/
+*.map
+*.scen
+*.deb

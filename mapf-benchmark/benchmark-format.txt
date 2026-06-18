@@ -1,0 +1,11 @@
+we benchmark the following problem pair: (obstacle grid, agent start/end).
+obstacle grids are represented via .map files and agents are sourced/selected from .map-linked .scen files.
+
+our problem dataset: use .map and the entire .scen file(s) provided.
+
+runtime component:
+using the mapfast(er) portfolio: cbs, cbsh, sat, bcp
+for each problem and each solver, we want:
+- a solution format file.
+
+metric component:

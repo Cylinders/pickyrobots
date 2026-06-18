@@ -1,9 +1,14 @@
 brief setup (wsl2 nvidia)
 
-first time setup:
+=== IGNORE FOR NOW ===
 follow instructions: https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_network
-download and
-> sudo apt-get install build-essential libopencv-dev cmake
+> wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-keyring_1.1-1_all.deb
+> sudo dpkg -i cuda-keyring_1.1-1_all.deb
+> sudo apt-get update
+=== IGNORE FOR NOW ===
+
+first time setup:
+> sudo apt-get install build-essential libopencv-dev cmake nlohmann-json3-dev
 > cmake -B build
 
 build:
