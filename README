@@ -1,0 +1,4 @@
+The main repository for code related to our MAPF research.
+
+mapf-solvers/ contains the solvers used throughout the research as a library.
+mapf-benchmark/ contains the benchmarking framework used to generate data.
