@@ -33,7 +33,7 @@
 using namespace std;
 
 //ALGORITHM ONE: CBS
-bool algorithmOne(const string &mapFilePath, const string &scenFilePath, int n) {
+bool cbs_solve(const string &mapFilePath, const string &scenFilePath, int n) {
     // --- CBSH ---
     // You can easily change your heuristics and other parameters right here!
 
@@ -127,7 +127,7 @@ bool algorithmOne(const string &mapFilePath, const string &scenFilePath, int n) 
 
 // ALGORITHM 2: CBSH:
 
-bool algorithmTwo(const string &mapFilePath, const string &scenFilePath, int n) {
+bool cbsh_solve(const string &mapFilePath, const string &scenFilePath, int n) {
     // --- CBSH ---
     // You can easily change your heuristics and other parameters right here!
 
@@ -215,7 +215,7 @@ bool algorithmTwo(const string &mapFilePath, const string &scenFilePath, int n) 
 
 // ALGORITHM 3: BCP
 
-std::string algorithmThree(const int t, const std::string& input) {
+std::string bcp_solve(const int t, const std::string& input) {
     // 1. Setup the fake command line arguments
     std::string programName = "bcp-mapf"; // Dummy program name (equivalent to argv[0])
     std::string time_limit = "--time-limit="+std::to_string(t);
@@ -247,7 +247,7 @@ std::string algorithmThree(const int t, const std::string& input) {
 
 // ALGORITHM 3: MDD SAT
 
-string algorithmFour(const string& input) {
+string sat_solve(const string& input) {
     string s_arg0 = "MyApp";
     string s_arg1 = "--input-file=" + input;
     string s_arg2 = "--output-file=my_output.txt";

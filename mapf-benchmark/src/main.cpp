@@ -30,7 +30,7 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
     const Grid map = parse_map_from(problem.map);
 
     for (const auto &scenario_path: problem.scenarios) {
-        cout << "map: " << problem.map << ", scenario: " << scenario_path << std::endl;
+        std::cout << "map: " << problem.map << ", scenario: " << scenario_path << std::endl;
         out << "scenario: " << scenario_path << std::endl;
         // const std::vector<Agent> scenario = sample_n(parse_scenario_from(scenario_path), 2);
         const std::vector<Agent> scenario = parse_scenario_from(scenario_path);
@@ -46,7 +46,7 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
         std::cout << "starting cbs\n";
         {
             auto start = std::chrono::steady_clock::now();
-            auto solved = algorithmOne(problem.map, scenario_path, scenario.size());
+            auto solved = cbs_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
@@ -57,7 +57,7 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
         std::cout << "starting cbsh\n";
         {
             auto start = std::chrono::steady_clock::now();
-            auto solved = algorithmTwo(problem.map, scenario_path, scenario.size());
+            auto solved = cbsh_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
@@ -71,7 +71,7 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             scip_tmp_copy(problem.map, scenario_path);
 
             auto start = std::chrono::steady_clock::now();
-            auto output = algorithmThree(60, std::filesystem::absolute(tmp / scenario_path.filename()));
+            auto output = bcp_solve(60, std::filesystem::absolute(tmp / scenario_path.filename()));
             auto end = std::chrono::steady_clock::now();
 
             scip_tmp_clear();

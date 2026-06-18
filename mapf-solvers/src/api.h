@@ -1,7 +1,6 @@
 #pragma once
-#include "CBS.h"
 
-bool algorithmOne(const std::string &mapFilePath, const std::string &scenFilePath, int n);
-bool algorithmTwo(const std::string &mapFilePath, const std::string &scenFilePath, int n);
-std::string algorithmThree(int t, const std::string& input);
-std::string algorithmFour(const std::string& input);
+bool cbs_solve(const std::string &mapFilePath, const std::string &scenFilePath, int n);
+bool cbsh_solve(const std::string &mapFilePath, const std::string &scenFilePath, int n);
+std::string bcp_solve(int t, const std::string& input);
+std::string sat_solve(const std::string& input);
