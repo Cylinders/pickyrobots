@@ -1,6 +1,7 @@
 build/
 cmake-build-*/
 dump/
+__pycache__/
 .vscode/
 .idea/
 *.map
