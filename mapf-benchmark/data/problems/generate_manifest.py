@@ -2,7 +2,6 @@
 import json
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parent
 MAPS_DIR = ROOT / "maps"
 SCENARIOS_DIR = ROOT / "scenarios"
@@ -29,6 +28,9 @@ def matches_map(scen_base: str, map_stem: str) -> bool:
             or scen_base.startswith(map_stem + ".")
     )
 
+def remove_trailing_newlines(path: Path) -> None:
+    text = path.read_text(encoding="utf-8")
+    path.write_text(text.rstrip("\r\n"), encoding="utf-8")
 
 def main() -> None:
     maps = sorted(MAPS_DIR.glob("*.map"))
@@ -40,6 +42,7 @@ def main() -> None:
     scenarios_by_map: dict[str, list[Path]] = {stem: [] for stem in map_by_stem}
 
     for scen in scenarios:
+        remove_trailing_newlines(scen)
         scen_stem = scenario_base_name(scen)
 
         match = next(

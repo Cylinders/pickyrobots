@@ -1,0 +1,4 @@
+[submodule "external/mapf-solvers"]
+	path = external/mapf-solvers
+	url = git@github.com:Cylinders/mapfdecompositiondata.git
+	branch = solutionformat

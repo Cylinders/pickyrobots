@@ -1,6 +1,7 @@
 #include <span>
 #include <vector>
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 #include "../include/mapfaster_encoder.h"
 
@@ -47,7 +48,6 @@ inline std::vector<float> preprocess_rgb_one(const cv::Mat &rgb) {
             const cv::Vec3b px = row[x];
 
             for (int c = 0; c < C; ++c) {
-
                 const float v = static_cast<float>(px[c]) / 255.0f;
                 out[c * H * W + y * W + x] = (v - mean[c]) / std[c];
             }

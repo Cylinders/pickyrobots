@@ -27,3 +27,7 @@ target_link_libraries(mapf-dataset PRIVATE
         onnxruntime
         nlohmann_json::nlohmann_json
 )
+
+add_subdirectory(external/mapf-solvers EXCLUDE_FROM_ALL)
+
+target_link_libraries(mapf-dataset PRIVATE mapf-solvers)

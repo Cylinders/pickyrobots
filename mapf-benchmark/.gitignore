@@ -6,3 +6,6 @@ dump/
 *.map
 *.scen
 *.deb
+*.zip
+output
+*.bin
