@@ -7,6 +7,13 @@
 
 using json = nlohmann::json;
 
+static bool is_ignored(const std::string &line) {
+    const auto pos = line.find_first_not_of(" \t\r\n");
+
+    return pos == std::string::npos ||
+           line.compare(pos, 2, "//") == 0;
+}
+
 std::vector<ManifestProblem> parse_manifest(
     const std::filesystem::path &manifest_path
 ) {
@@ -24,7 +31,7 @@ std::vector<ManifestProblem> parse_manifest(
     while (std::getline(in, line)) {
         ++line_no;
 
-        if (line.empty()) {
+        if (line.empty() || is_ignored(line)) {
             continue;
         }
 
