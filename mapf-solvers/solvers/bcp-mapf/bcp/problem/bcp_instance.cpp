@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
-#include "problem/instance.h"
+#include "problem/bcp_instance.h"
 
 struct Line
 {
@@ -12,7 +12,7 @@ struct Line
     Node goal;
 };
 
-Instance::Instance(const FilePath& scenario_path_, const Agent agent_limit_)
+BcpInstance::BcpInstance(const FilePath& scenario_path_, const Agent agent_limit_)
 {
     // Check.
     // release_assert(agent_limit > 0, "Using {} agents but must have at least 1 agent", agent_limit);

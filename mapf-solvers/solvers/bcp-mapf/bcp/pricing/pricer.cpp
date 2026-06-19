@@ -32,7 +32,7 @@ Author: Edward Lam <ed@ed-lam.com>
 #include <chrono>
 #include <numeric>
 
-#include "problem/instance.h"
+#include "problem/bcp_instance.h"
 #include "pricing/astar.h"
 
 // Pricer properties

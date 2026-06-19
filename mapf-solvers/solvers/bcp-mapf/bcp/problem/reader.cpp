@@ -22,7 +22,7 @@ Author: Edward Lam <ed@ed-lam.com>
 #include "problem/problem.h"
 #include <regex>
 
-#include "problem/instance.h"
+#include "problem/bcp_instance.h"
 #include "pricing/astar.h"
 
 // Read instance from file
@@ -40,7 +40,7 @@ SCIP_RETCODE read_instance(
     }
 
     // Load instance.
-    auto instance = std::make_shared<Instance>(scenario_path, nb_agents);
+    auto instance = std::make_shared<BcpInstance>(scenario_path, nb_agents);
 
     // Create the problem.
     SCIP_CALL(SCIPprobdataCreate(scip, instance_name.c_str(), instance));

@@ -23,7 +23,7 @@ Author: Edward Lam <ed@ed-lam.com>
 #include "types/map_types.h"
 #include "constraints/separator.h"
 
-#include "problem/instance.h"
+#include "problem/bcp_instance.h"
 #include "pricing/astar.h"
 
 #ifdef USE_GOAL_CONFLICTS
@@ -40,7 +40,7 @@ struct GoalConflict
 SCIP_RETCODE SCIPprobdataCreate(
     SCIP* scip,                      // SCIP
     const char* probname,            // Problem name
-    SharedPtr<Instance>& instance    // Instance
+    SharedPtr<BcpInstance>& instance    // Instance
 );
 
 // Add a new variable from a primal heuristic

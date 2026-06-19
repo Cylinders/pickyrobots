@@ -14,7 +14,7 @@ struct AgentData
     Node goal;
 };
 
-struct Instance
+struct BcpInstance
 {
     // Instance
     String name;
@@ -31,11 +31,11 @@ struct Instance
 
   public:
     // Constructors and destructor
-    Instance(const FilePath& scenario_path, const Agent agent_limit);
-    Instance() = delete;
-    Instance(const Instance&) = delete;
-    Instance(Instance&&) = delete;
-    Instance& operator=(const Instance&) = delete;
-    Instance& operator=(Instance&&) = delete;
-    ~Instance() = default;
+    BcpInstance(const FilePath& scenario_path, const Agent agent_limit);
+    BcpInstance() = delete;
+    BcpInstance(const BcpInstance&) = delete;
+    BcpInstance(BcpInstance&&) = delete;
+    BcpInstance& operator=(const BcpInstance&) = delete;
+    BcpInstance& operator=(BcpInstance&&) = delete;
+    ~BcpInstance() = default;
 };

@@ -85,7 +85,7 @@ Author: Edward Lam <ed@ed-lam.com>
 struct SCIP_ProbData
 {
     // Instance data
-    SharedPtr<Instance> instance;                                               // Instance
+    SharedPtr<BcpInstance> instance;                                               // Instance
     Agent N;                                                                    // Number of agents
     Time max_path_length;
 
@@ -1055,7 +1055,7 @@ SCIP_RETCODE SCIPprobdataAddTwoAgentRobustCut(
 SCIP_RETCODE SCIPprobdataCreate(
     SCIP* scip,                      // SCIP
     const char* probname,            // Problem name
-    SharedPtr<Instance>& instance    // Instance
+    SharedPtr<BcpInstance>& instance    // Instance
 )
 {
     // Check.
