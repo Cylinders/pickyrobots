@@ -28,6 +28,7 @@ target_link_libraries(mapf-dataset PRIVATE
         nlohmann_json::nlohmann_json
 )
 
+add_subdirectory(../mapf-common ${CMAKE_CURRENT_BINARY_DIR}/mapf-common EXCLUDE_FROM_ALL)
 add_subdirectory(../mapf-solvers ${CMAKE_CURRENT_BINARY_DIR}/mapf-solvers EXCLUDE_FROM_ALL)
 
-target_link_libraries(mapf-dataset PRIVATE mapf-solvers)
+target_link_libraries(mapf-dataset PRIVATE mapf-solvers mapf::common)
