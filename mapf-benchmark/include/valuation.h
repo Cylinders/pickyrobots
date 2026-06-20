@@ -1,16 +1,14 @@
 #pragma once
 
-#include <span>
-#include <unordered_map>
+#include <mapf_common/grid.h>
+#include <mapf_common/agent.h>
 
-#include "agent.h"
-#include "grid.h"
 #include "portfolio.h"
 
 struct ValuationInput {
-    const Grid& grid;
-    const std::vector<Agent> agents;
-    const std::unordered_map<Agent, std::vector<Pos>>& paths;
+    const mapf::Grid& grid;
+    const std::vector<mapf::Agent> agents;
+    const std::unordered_map<mapf::Agent, std::vector<mapf::Pos>>& paths;
 };
 
 struct SolverWeight {

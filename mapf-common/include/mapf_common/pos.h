@@ -21,3 +21,7 @@ struct std::hash<mapf::Pos> {
         return hrow ^ (hcol << 1);
     }
 };
+
+inline std::ostream& operator<<(std::ostream& os, const mapf::Pos& pos) {
+    return os << "(" << pos.row << ", " << pos.col << ")";
+}

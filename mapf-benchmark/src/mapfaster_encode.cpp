@@ -63,14 +63,14 @@ const cv::Vec3b START{0, 255, 0}; // green
 const cv::Vec3b GOAL{0, 0, 255}; // blue
 const cv::Vec3b PATH{0, 0, 0}; // black
 
-std::vector<float> mapfaster_encode(const Grid &grid, const std::vector<Agent> &agents,
-                                    const std::unordered_map<Agent, std::vector<Pos> > &paths) {
+std::vector<float> mapfaster_encode(const mapf::Grid &grid, const mapf::Agents &agents,
+    const std::unordered_map<mapf::Agent, std::vector<mapf::Pos> > &paths) {
     cv::Mat image(grid.height, grid.width, CV_8UC3);
 
     for (int row = 0; row < grid.height; ++row) {
         for (int col = 0; col < grid.width; ++col) {
             image.at<cv::Vec3b>(row, col) =
-                    grid.is_blocked(col, row) ? OBSTACLE : FREE;
+                    grid.is_blocked(row, col) ? OBSTACLE : FREE;
         }
     }
 

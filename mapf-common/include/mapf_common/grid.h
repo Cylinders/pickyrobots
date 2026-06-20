@@ -16,4 +16,16 @@ namespace mapf {
             return blocked[index(row, col)];
         }
     };
+
+    namespace dump {
+        inline void dump_grid(std::ostream &os, const Grid &grid) {
+            for (int y = 0; y < grid.height; ++y) {
+                for (int x = 0; x < grid.width; ++x) {
+                    os << (grid.blocked[y * grid.width + x] ? '@' : '.');
+                }
+                os << '\n';
+            }
+        }
+
+    }
 }

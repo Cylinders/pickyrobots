@@ -13,5 +13,4 @@ namespace mapf {
         std::string algo;
         std::vector<std::optional<AgentSolution>> agent_solutions;
     };
-
 }
