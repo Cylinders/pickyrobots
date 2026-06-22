@@ -3,6 +3,8 @@
 #include <random>
 #include <onnxruntime_cxx_api.h>
 #include <solvers.h>
+#include <thread>
+#include <mutex>
 
 #include "manifest.h"
 #include "mapfaster_encoder.h"
@@ -25,6 +27,7 @@ void scip_tmp_copy(const std::filesystem::path &f1, const std::filesystem::path 
 
 void scip_tmp_clear();
 
+
 void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &problem) {
     std::ofstream out(output / (problem.id + ".txt"));
 
@@ -32,11 +35,13 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
     out << "map: " << problem.map << std::endl;
     const mapf::Grid map = mapf::reader::read_map(problem.map);
 
+    // Create a mutex to protect our output streams
+    std::mutex io_mutex;
+
     for (const auto &scenario_path: problem.scenarios) {
         std::cout << "map: " << problem.map << ", scenario: " << scenario_path << std::endl;
         out << "scenario: " << scenario_path << std::endl;
 
-        // const std::vector<Agent> scenario = sample_n(parse_scenario_from(scenario_path), 2);
         const std::vector<mapf::Agent> scenario = mapf::reader::read_scenario(scenario_path);
         const auto paths = find_minimal_paths(map, scenario);
 
@@ -46,36 +51,53 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             out << to_string(solver) << ":" << weight << "" << std::endl;
         }
 
-        // cbs  1
-        std::cout << "starting cbs\n";
-        {
+        // --- MULTITHREADING SECTION ---
+
+        // 1. CBS Thread
+        std::thread t_cbs([&]() {
+            {
+                std::lock_guard<std::mutex> lock(io_mutex);
+                std::cout << "starting cbs\n";
+            }
+
             auto start = std::chrono::steady_clock::now();
             mapf::Solution solved = cbs_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-            if (!solved.completed) { out << "CBS failed." << std::endl; } else {
-                out << "CBS took " << elapsed_ms << " ms" << std::endl;
+            {
+                std::lock_guard<std::mutex> lock(io_mutex);
+                if (!solved.completed) { out << "CBS failed." << std::endl; }
+                else { out << "CBS took " << elapsed_ms << " ms" << std::endl; }
             }
-        }
+        });
 
-        // cbsh 2
-        std::cout << "starting cbsh\n";
-        {
+        // 2. CBSH Thread
+        std::thread t_cbsh([&]() {
+            {
+                std::lock_guard<std::mutex> lock(io_mutex);
+                std::cout << "starting cbsh\n";
+            }
+
             auto start = std::chrono::steady_clock::now();
             mapf::Solution solved = cbsh_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-            if (!solved.completed) { out << "CBSH failed." << std::endl; } else {
-                out << "CBSH took " << elapsed_ms << " ms" << std::endl;
+            {
+                std::lock_guard<std::mutex> lock(io_mutex);
+                if (!solved.completed) { out << "CBSH failed." << std::endl; }
+                else { out << "CBSH took " << elapsed_ms << " ms" << std::endl; }
             }
-        }
+        });
 
-        // bcp  3
-        std::cout << "starting bcp\n";
+        // 3. BCP Thread
+        std::thread t_bcp([&]() {
+            {
+                std::lock_guard<std::mutex> lock(io_mutex);
+                std::cout << "starting bcp\n";
+            }
 
-        {
             scip_tmp_copy(problem.map, scenario_path);
 
             auto start = std::chrono::steady_clock::now();
@@ -85,12 +107,20 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             scip_tmp_clear();
 
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-            if (!output.completed) {
-                out << "BCP failed." << std::endl;
-            } else {
-                out << "BCP took " << elapsed_ms << " ms" << std::endl;
+
+            {
+                std::lock_guard<std::mutex> lock(io_mutex);
+                if (!output.completed) { out << "BCP failed." << std::endl; }
+                else { out << "BCP took " << elapsed_ms << " ms" << std::endl; }
             }
-        }
+        });
+
+        // --- SYNCHRONIZATION ---
+
+        // Wait for all three solvers to finish before looping to the next scenario
+        if (t_cbs.joinable()) t_cbs.join();
+        if (t_cbsh.joinable()) t_cbsh.join();
+        if (t_bcp.joinable()) t_bcp.join();
     }
 
     out.close();

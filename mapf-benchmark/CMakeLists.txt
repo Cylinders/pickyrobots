@@ -10,6 +10,7 @@ link_directories(${ORT_DIR}/lib)
 
 find_package(OpenCV REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(Threads REQUIRED)
 
 add_executable(mapf-dataset
         src/main.cpp
@@ -31,4 +32,4 @@ target_link_libraries(mapf-dataset PRIVATE
 add_subdirectory(../mapf_common ${CMAKE_CURRENT_BINARY_DIR}/mapf_common EXCLUDE_FROM_ALL)
 add_subdirectory(../mapf-solvers ${CMAKE_CURRENT_BINARY_DIR}/mapf-solvers EXCLUDE_FROM_ALL)
 
-target_link_libraries(mapf-dataset PRIVATE mapf-solvers mapf::common)
+target_link_libraries(mapf-dataset PRIVATE mapf-solvers mapf::common Threads::Threads)
