@@ -20,10 +20,11 @@ Author: Edward Lam <ed@ed-lam.com>
 #pragma once
 
 #include "problem/includes.h"
-#include <string> 
+#include <string>
+#include "mapf_common/solution.h"
 
 // Write best solution to file
-std::string write_best_solution(
-    SCIP* scip    // SCIP
+mapf::Solution write_best_solution(
+    SCIP* scip,   // SCIP
+    mapf::Solution& mapf_sol
 );
-

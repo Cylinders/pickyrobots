@@ -1,4 +1,5 @@
 #include "bcp_adapter.h"
+#include <iostream>
 
 #include "../bcp/problem/includes.h"
 #include "../bcp/problem/reader.h"
@@ -9,12 +10,12 @@
 
 #include "cxxopts.hpp"
 
-
+#include "mapf_common/solution.h"
 namespace {
     SCIP_RETCODE bcp_start_solver(
         int argc, // Number of shell parameters
         char **argv, // Array with shell parameters
-        std::string &outputVal // OUT parameter to hold the solution string
+        mapf::Solution &outputVal // OUT parameter to hold the solution string
     ) {
         // Parse program options.
         std::string instance_file;
@@ -340,7 +341,7 @@ namespace {
             SCIP_CALL(SCIPprintStatistics(scip, nullptr));
 
             // Write best solution to the string reference provided by the caller
-            outputVal = write_best_solution(scip);
+            write_best_solution(scip, outputVal);
         }
 
         // Free memory.
@@ -352,23 +353,23 @@ namespace {
         return SCIP_OKAY;
     }
 
-    std::string bcp_returnSol(int argc, char **argv) {
-        std::string returnString;
+    mapf::Solution bcp_returnSol(int argc, char **argv) {
+        mapf::Solution returnSol;
 
         // Pass returnString by reference so start_solver can populate it
-        SCIP_RETCODE retcode = bcp_start_solver(argc, argv, returnString);
+        SCIP_RETCODE retcode = bcp_start_solver(argc, argv, returnSol);
 
         // Optional: If you want to check for errors, you can inspect 'retcode' here.
         if (retcode != SCIP_OKAY) {
-            // You might want to log SCIPprintError(retcode) here if needed.
+            std::cerr << "error SCIP";
         }
 
-        return returnString;
+        return returnSol;
     }
 }
 
 namespace mapf_solvers::bcp {
-    std::string bcp_solve(int t, const std::string &input) {
+    mapf::Solution bcp_solve(int t, const std::string &input) {
         // 1. Setup the fake command line arguments
         std::string programName = "bcp-mapf"; // Dummy program name (equivalent to argv[0])
         std::string time_limit = "--time-limit=" + std::to_string(t);

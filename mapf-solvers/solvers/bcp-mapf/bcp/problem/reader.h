@@ -28,4 +28,3 @@ SCIP_RETCODE read_instance(
     const std::filesystem::path& scenario_path,                  // File path to scenario
     const Agent nb_agents = std::numeric_limits<Agent>::max()    // Number of agents to read
 );
-

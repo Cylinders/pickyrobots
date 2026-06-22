@@ -7,10 +7,10 @@
 #include "manifest.h"
 #include "mapfaster_encoder.h"
 #include "mapfaster_valuation.h"
-#include "mapf-common/map_reader.h"
-#include "mapf-common/scenario_reader.h"
-#include "mapf-common/solution.h"
-#include "mapf-common/solution_writer.h"
+#include "mapf_common/map_reader.h"
+#include "mapf_common/scenario_reader.h"
+#include "mapf_common/solution.h"
+#include "mapf_common/solution_writer.h"
 
 std::unordered_map<mapf::Agent, std::vector<mapf::Pos> > find_minimal_paths(
     const mapf::Grid &grid, const std::vector<mapf::Agent> &agents);

@@ -1,16 +1,15 @@
 #include "cbsh_adapter.h"
-
 #include <iostream>
 #include <string>
-
 #include "CBS.h"
 #include "CBSHeuristic.h"
+#include "mapf_common/solution.h"
 
 namespace {
-    bool cbsh_solve_with_params(heuristics_type h,        // Options: "Zero", "CG", "DG", "WDG"
+    mapf::Solution cbsh_solve_with_params(heuristics_type h,        // Options: "Zero", "CG", "DG", "WDG"
                                 rectangle_strategy r,    // Options: "None", "R", "RM", "GR", "Disjoint"
                                 corridor_strategy c,    // Options: "None", "C", "PC", "STC", "GC", "Disjoint"
-                                const std::string &mapFilePath, const std::string &scenFilePath, int n) {
+                                const std::string &mapFilePath, const std::string &scenFilePath, int n, const std::string &algo) {
         // Other solver configurations
         int agentNum = 0; // 0 reads all agents from the file
         double cutoffTime = 60.0; // seconds
@@ -40,9 +39,10 @@ namespace {
         // --- Run CBS ---
         double runtime = 0;
         int min_f_val = 0;
+        bool solved;
         for (int i = 0; i < restartRuns; i++) {
             cbs.clear();
-            cbs.solve(cutoffTime, min_f_val);
+            solved = cbs.solve(cutoffTime, min_f_val);
             runtime += cbs.runtime;
             if (cbs.solution_found) break;
             min_f_val = (int) cbs.min_f_val;
@@ -51,16 +51,23 @@ namespace {
         cbs.runtime = runtime;
         cbs.clearSearchEngines();
 
-        return cbs.solution_found;
+        return cbs.returnPaths(mapFilePath, scenFilePath, algo, solved, runtime);
     }
+
 }
 
 namespace mapf_solvers::cbsh {
-    bool cbs_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
-        return cbsh_solve_with_params(ZERO, NR, NC, mapFilePath, scenFilePath, n);
+    mapf::Solution cbs_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
+        return cbsh_solve_with_params(ZERO, NR, NC, mapFilePath, scenFilePath, n, "CBS");
     }
 
-    bool cbsh_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
-        return cbsh_solve_with_params(WDG, GR, GC, mapFilePath, scenFilePath, n);
+    mapf::Solution cbsh_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
+        return cbsh_solve_with_params(WDG, GR, GC, mapFilePath, scenFilePath, n, "CBSH");
     }
+
+    /*
+    mapf::Solution cbsh_solveReturn(const std::string &mapFilePath, const std::string &scenFilePath, int n){
+
+    }
+    */
 }

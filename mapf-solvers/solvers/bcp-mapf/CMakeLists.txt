@@ -236,3 +236,8 @@ endif ()
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     target_link_libraries(bcp-mapf PRIVATE dl)
 endif ()
+
+target_link_libraries(bcp-mapf
+        PUBLIC
+        mapf::common
+)

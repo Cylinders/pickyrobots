@@ -2,11 +2,12 @@
 #include <random>      // std::default_random_engine
 #include <chrono>       // std::chrono::system_clock
 #include <sstream>
+#include <utility> // std::move(std::string)
 #include "CBS.h"
 #include "SIPP.h"
 #include "SpaceTimeAStar.h"
-
-
+#include "mapf_common/solution.h"
+#include <string>
 
 // takes the paths_found_initially and UPDATE all (constrained) paths found for agents from curr to start
 // also, do the same for ll_min_f_vals and paths_costs (since its already "on the way").
@@ -109,7 +110,7 @@ void CBS::findConflicts(CBSNode& curr, int a1, int a2)
 					conflict->vertexConflict(a1_, a2_, loc1, timestep);
 				assert(!conflict->constraint1.empty());
 				assert(!conflict->constraint2.empty());
-				curr.unknownConf.push_front(conflict); // It's at least a semi conflict			
+				curr.unknownConf.push_front(conflict); // It's at least a semi conflict
 			}
 		}
 	}
@@ -655,8 +656,8 @@ void CBS::saveCT(const string &fileName) const // write the CT to a file
 	output << "center = true;" << endl;
 	for (auto node : allNodes_table)
 	{
-		output << node->time_generated << " [label=\"#" << node->time_generated 
-					<< "\ng+h="<< node->g_val << "+" << node->h_val 
+		output << node->time_generated << " [label=\"#" << node->time_generated
+					<< "\ng+h="<< node->g_val << "+" << node->h_val
 					<< "\nd=" << node->tie_breaking << "\"]" << endl;
 		if (node == dummy_start)
 			continue;
@@ -693,9 +694,9 @@ void CBS::savePaths(const string &fileName) const
     output.close();
 }
 
-std::string CBS::writePaths() const 
+std::string CBS::writePaths() const
 {
-    std::stringstream output; 
+    std::stringstream output;
 
     for (int i = 0; i < num_of_agents; i++)
     {
@@ -711,6 +712,44 @@ std::string CBS::writePaths() const
     return output.str();
 }
 
+mapf::Solution CBS::returnPaths(std::string mapName, std::string scenario, std::string algo, bool completed, double runtime) const
+{
+    mapf::Solution returnVal;
+    returnVal.map = std::move(mapName);
+    returnVal.scenario = std::move(scenario);
+    returnVal.algo = std::move(algo);
+    returnVal.time = -1.0;
+    returnVal.completed = completed;
+
+    if (!completed) {
+        returnVal.agent_solutions.resize(num_of_agents);
+
+            for (int i = 0; i < num_of_agents; i++)
+            {
+                if (paths[i] != nullptr)
+                {
+                    mapf::AgentSolution current_agent_path;
+                    current_agent_path.reserve(paths[i]->size());
+
+                    for (const auto& t : *paths[i])
+                    {
+                        mapf::Pos position;
+                        position.row = search_engines[0]->instance.getRowCoordinate(t.location);
+                        position.col = search_engines[0]->instance.getColCoordinate(t.location);
+
+                        current_agent_path.push_back(position);
+                    }
+
+                    returnVal.agent_solutions[i] = current_agent_path;
+                }
+                else
+                {
+                    returnVal.agent_solutions[i] = std::nullopt;
+                }
+            }
+    }
+    return returnVal;
+}
 void CBS::printConflicts(const CBSNode &curr)
 {
 	for (const auto& conflict : curr.conflicts)
@@ -947,7 +986,7 @@ bool CBS::solve(double _time_limit, int _cost_lowerbound, int _cost_upperbound)
 					int i = (bool)(rand() % 2);
 					for (const auto constraint : child[1 - i]->constraints)
 					{
-						child[i]->constraints.emplace_back(get<0>(constraint), get<1>(constraint), get<2>(constraint), get<3>(constraint), 
+						child[i]->constraints.emplace_back(get<0>(constraint), get<1>(constraint), get<2>(constraint), get<3>(constraint),
 																							constraint_type::POSITIVE_BARRIER);
 					}
 				}
@@ -1188,7 +1227,7 @@ bool CBS::generateRoot()
 		}
 	}
 
-	// generate dummy start and update data structures		
+	// generate dummy start and update data structures
 	dummy_start->h_val = 0;
 	dummy_start->depth = 0;
 	dummy_start->open_handle = open_list.push(dummy_start);
@@ -1282,7 +1321,7 @@ bool CBS::validateSolution() const
 					if (loc1 == loc2)
 					{
 						cout << "Agents " << a1 << " and " << a2 << " collides at " << loc1 << " at timestep " << timestep << endl;
-						return false; // It's at least a semi conflict			
+						return false; // It's at least a semi conflict
 					}
 				}
 			}
