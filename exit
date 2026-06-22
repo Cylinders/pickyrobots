@@ -1,0 +1,149 @@
+[33mcommit 255c09689e542f33868363aa31b87604efdc3ac4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Sun Jun 21 23:27:46 2026 -0400
+
+    missed in last commit lol
+
+[33mcommit 2669a9ba50c7ba1bffff1c5957f070c29d39c6f5[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Sun Jun 21 23:27:30 2026 -0400
+
+    bcp and cbs and cbsh all COMPILE (not tested) to output a solution TYPE
+    (not file)
+
+[33mcommit 519e85a3bbae70f4a8412bafa8d316ca6872f091[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Fri Jun 19 17:15:15 2026 -0400
+
+    common: introduce mapf-common
+
+[33mcommit cbe37d4611d3f920c40e09249faa56947be376c7[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 21:35:15 2026 -0400
+
+    solvers: fix instance conflict + undo bcp mem leak. refactor makefile structure
+
+[33mcommit 9a7c9b909851f6884014897321d9eb1abc9280bb[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 18:14:56 2026 -0400
+
+    solvers: gave solver entry points descriptive names
+
+[33mcommit 1043df40eb549ba5ffea45b2ade736392624d23a[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 16:26:36 2026 -0400
+
+    chore: remove old mapf-solvers submodule
+
+[33mcommit c7f82acd3eb204498a5202549c7ef9ebb2d1c1aa[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 16:18:10 2026 -0400
+
+    benchmark: ignore blank and commented lines during manifest parsing
+
+[33mcommit aec52f36a80b54a778ef05000a90d61ccc911ecc[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 16:06:54 2026 -0400
+
+    add brief README
+
+[33mcommit 4abbd6f40b61cd8a0eb89d36f76d506525a7a30a[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 16:01:45 2026 -0400
+
+    benchmark: use sibling mapf-solvers
+
+[33mcommit 1e7438253ca89374cc15f2987a5db8a675788441[m
+Merge: 95e17b2 8c1a458
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 15:40:12 2026 -0400
+
+    import mapf-solvers history into a new project directory
+
+[33mcommit 8c1a458595b791b0519a3c31b772d6a54d44ba28[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 10:00:45 2026 -0400
+
+    refactor into proper library and introduce a bcp memory leak
+    
+    the probable memory leak allows it to at least run for now.
+
+[33mcommit 95e17b2818feae50bf968a7c1645da5c2190ec33[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Thu Jun 18 09:55:55 2026 -0400
+
+    more benchmark flow work
+
+[33mcommit 37785d4311a3131b3823bb61802aabe18f298ba0[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Thu Jun 18 02:14:07 2026 -0400
+
+    dataparser
+    
+    works
+
+[33mcommit 1c1e5edfed1fd0b06ab42f452e44bd4898d5ede4[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Wed Jun 17 23:28:56 2026 -0400
+
+    bcp-mapf
+
+[33mcommit 9e90126e0c748773ed325af54f0ea6847ac45797[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Wed Jun 17 23:24:57 2026 -0400
+
+    bcp sync
+
+[33mcommit ee952b26cd8664d9f86e87ede4832d98dc784b4c[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Wed Jun 17 21:54:13 2026 -0400
+
+    implement initial benchmarking flow
+
+[33mcommit e1ad974a36ebf86937c1ebe91d7722ccf24b0fbe[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Wed Jun 17 13:20:13 2026 -0400
+
+    BCP calls, but memory leak
+
+[33mcommit 1cf142cf3bc81cf8f71fdc291959af671e361660[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Wed Jun 17 00:29:55 2026 -0400
+
+    BCP works as a library but wont accept input scen
+
+[33mcommit 8ba28cd7f8da9e6987e137b9be74d9632e13e5a2[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Tue Jun 16 14:28:55 2026 -0400
+
+    all three libraries succesful compilation
+
+[33mcommit 1bef95ecb0f726c077c20d8b36b0ea3629f9728d[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Tue Jun 16 13:55:55 2026 -0400
+
+    BCP compilation success
+
+[33mcommit 48cd45de1bdbdadd8d61577021f9b1efdf1d6b83[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Sun Jun 14 20:34:21 2026 -0400
+
+    mddsat works needs solution formatting
+
+[33mcommit eb3b23408671480b7755f5da3aa8c8a199cd05d9[m
+Author: Marco Sitar <marco+git@sitar.dev>
+Date:   Sat Jun 13 03:54:58 2026 -0400
+
+    initial commit
+
+[33mcommit 2c5d1d7147af8f86dc67787903f33fffb9857fae[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Thu Jun 11 21:17:56 2026 -0400
+
+    deleted unnecessary
+
+[33mcommit 9d8f2e3e3a3ba667be8959d673226017df728900[m
+Author: Ruthvik Venkatesan <ruthvikotravenkatesan@gmail.com>
+Date:   Thu Jun 11 19:18:47 2026 -0400
+
+    imported solvers

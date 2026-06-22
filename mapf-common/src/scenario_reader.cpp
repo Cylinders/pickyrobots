@@ -1,4 +1,4 @@
-#include <mapf_common/scenario_reader.h>
+#include <mapf-common/scenario_reader.h>
 #include <filesystem>
 
 mapf::Agents mapf::reader::read_scenario(std::istream &in) {

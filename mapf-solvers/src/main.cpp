@@ -29,6 +29,7 @@
 
 #include "solver_main.h"
 #include "solver.h"
+#include "solvers.h"
 
 using namespace std;
 //ALGORITHM ONE: CBS
@@ -50,7 +51,7 @@ string readMapAndScenFiles(const string& mapFilePath, const string& scenFilePath
     outData << scenStream.rdbuf();
     mapStream.close();
     scenStream.close();
-    cout << outData.str(); 
+    cout << outData.str();
     return outData.str();
 }
 
@@ -65,13 +66,12 @@ int main(int argc, char* argv[]) {
 
     // Now algorithmOne takes the two file paths!
     //cout << algorithmOne(mapFile, scenFile) << "\n";
-
     //cout << algorithmTwo(mapFile, scenFile) << "\n";
     //cout << algorithmThree("../solvers/bcp-mapf/instances/warehouse_extended/10x30-w5-0.scen") << "\n";
-    
-    cout << algorithmFour(readMapAndScenFiles(mapFile, scenFile)) << "\n";
 
-    
+
+
+
 
     return 0;
 }

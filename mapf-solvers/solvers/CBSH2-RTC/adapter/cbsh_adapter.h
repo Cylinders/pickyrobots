@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
+#include "mapf-common/solution.h"
 
 namespace mapf_solvers::cbsh {
-    bool cbs_solve(const std::string &mapFilePath, const std::string &scenFilePath, int n);
-    bool cbsh_solve(const std::string &mapFilePath, const std::string &scenFilePath, int n);
+    mapf::Solution cbs_solve(const std::string &mapFilePath, const std::string &scenFilePath, int n);
+    mapf::Solution cbsh_solve(const std::string &mapFilePath, const std::string &scenFilePath, int n);
 }

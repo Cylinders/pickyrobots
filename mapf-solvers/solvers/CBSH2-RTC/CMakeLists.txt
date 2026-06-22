@@ -27,4 +27,5 @@ target_include_directories(CBSH2_Library
 target_link_libraries(CBSH2_Library
         PUBLIC
         Boost::boost
+        mapf::common
 )

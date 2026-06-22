@@ -1,4 +1,4 @@
-#include <mapf_common/map_reader.h>
+#include <mapf-common/map_reader.h>
 
 namespace {
     bool map_char_blocked(char c) {

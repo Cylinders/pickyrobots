@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #pragma once
 
 #include <cstddef>
@@ -25,3 +26,28 @@ struct std::hash<mapf::Pos> {
 inline std::ostream& operator<<(std::ostream& os, const mapf::Pos& pos) {
     return os << "(" << pos.row << ", " << pos.col << ")";
 }
+=======
+#pragma once
+
+#include <cstddef>
+#include <functional>
+
+namespace mapf {
+    struct Pos {
+        int row{};
+        int col{};
+
+        auto operator<=>(const Pos&) const = default;
+    };
+
+}
+
+template <>
+struct std::hash<mapf::Pos> {
+    std::size_t operator()(const mapf::Pos& p) const noexcept {
+        auto hrow = std::hash<int>{}(p.row);
+        auto hcol = std::hash<int>{}(p.col);
+        return hrow ^ (hcol << 1);
+    }
+};
+>>>>>>> 788279b (bcp and cbs and cbsh all COMPILE (not tested) to output a solution TYPE)

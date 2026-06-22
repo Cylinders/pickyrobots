@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.28)
 project(mapf-solvers VERSION 1.0)
 
 # =======================================================
@@ -10,8 +10,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED 1)
 
-# Set C++ version
-set(CMAKE_CXX_STANDARD 17)
+# BUMPED: Changed to 20 because mapf-common strictly requires C++20
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED 1)
 
 # Set release build default
@@ -19,22 +19,20 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
+# =======================================================
+# ADD EXTERNAL DEPENDENCIES
+# =======================================================
+
 # bcp
 add_subdirectory(solvers/bcp-mapf)
 
 # cbsh2-rtc
 add_subdirectory(solvers/CBSH2-RTC)
 
-#
-## =======================================================
-## LIBRARY 3: reLOC (MDDSAT)
-## =======================================================
-#set(MDDSAT "solvers/MDDSAT")
-#file(GLOB MDDSAT_SOURCES "${MDDSAT}/src/*.cpp")
-#message(STATUS "MDDSAT Sources found: ${MDDSAT_SOURCES}")
-#add_library(MDDSAT_Library STATIC ${MDDSAT_SOURCES})
+# =======================================================
+# LIBRARY AND EXECUTABLES
+# =======================================================
 
-# wrapper
 add_library(mapf-solvers STATIC
         src/solvers.cpp
 )
@@ -42,14 +40,12 @@ add_library(mapf-solvers STATIC
 target_link_libraries(mapf-solvers PRIVATE
         bcp-mapf
         CBSH2_Library
-#        MDDSAT_Library
+        mapf::common   # ADDED: Link against the alias defined in mapf-common
 )
 
 target_include_directories(mapf-solvers
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-#        PRIVATE
-#        "${CMAKE_CURRENT_SOURCE_DIR}/solvers/MDDSAT/src"
 )
 
 option(MAPF_BUILD_APP "standalone app" OFF)
@@ -59,10 +55,6 @@ if (MAPF_BUILD_APP)
     target_link_libraries(MyApp PRIVATE
             bcp-mapf
             CBSH2_Library
-#            MDDSAT_Library
+            mapf::common  # ADDED: Also linked to the app
     )
-#    target_include_directories(MyApp PRIVATE
-#            "${CMAKE_CURRENT_SOURCE_DIR}/solvers/MDDSAT/src"
-#    )
 endif()
-

@@ -11,6 +11,7 @@ namespace mapf {
     };
 
     using Agents = std::vector<Agent>;
+<<<<<<< HEAD
 
     namespace dump {
         inline void dump_scenario(std::ostream& os, const std::vector<Agent>& scenario) {
@@ -29,3 +30,6 @@ struct std::hash<mapf::Agent> {
         return hs ^ hg << 1;
     }
 };
+=======
+}
+>>>>>>> 788279b (bcp and cbs and cbsh all COMPILE (not tested) to output a solution TYPE)

@@ -1,5 +1,6 @@
 #pragma once
 
+<<<<<<< HEAD
 #include <filesystem>
 #include <fstream>
 
@@ -17,4 +18,11 @@ namespace mapf::reader {
 
         return read_scenario(file);
     }
+=======
+#include <fstream>
+#include <mapf-common/agent.h>
+
+namespace mapf::reader {
+    Agents read_scenario(std::istream &in);
+>>>>>>> 788279b (bcp and cbs and cbsh all COMPILE (not tested) to output a solution TYPE)
 }

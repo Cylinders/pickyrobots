@@ -5,6 +5,7 @@
 #include "CorridorReasoning.h"
 #include "MutexReasoning.h"
 
+#include "mapf-common/solution.h"
 class CBS
 {
 public:
@@ -58,7 +59,7 @@ public:
 	void setSavingStats(bool s) { save_stats = s; heuristic_helper.save_stats = s; }
 
 	////////////////////////////////////////////////////////////////////////////////////////////
-	// Runs the algorithm until the problem is solved or time is exhausted 
+	// Runs the algorithm until the problem is solved or time is exhausted
 	bool solve(double time_limit, int cost_lowerbound = 0, int cost_upperbound = MAX_COST);
 
 	CBS(const Instance& instance, bool sipp, int screen);
@@ -74,6 +75,7 @@ public:
 	void saveCT(const string &fileName) const; // write the CT to a file
     void savePaths(const string &fileName) const; // write the paths to a file
 	std::string writePaths() const;
+	mapf::Solution returnPaths(std::string mapName, std::string scenario, std::string algo, bool completed, double runtime) const;
 	void clear(); // used for rapid random  restart
 
 private:
@@ -81,10 +83,10 @@ private:
 	bool disjoint_splitting; // disjoint splitting
 	bool mutex_reasoning; // using mutex reasoning
 	bool bypass; // using Bypass1
-	bool PC; // prioritize conflicts
+	bool PC; // prioritize conflictr
 	bool save_stats;
 
-	MDDTable mdd_helper;	
+	MDDTable mdd_helper;
 	RectangleReasoning rectangle_helper;
 	CorridorReasoning corridor_helper;
 	MutexReasoning mutex_helper;
@@ -98,7 +100,7 @@ private:
 	string getSolverName() const;
 
 	int screen;
-	
+
 	double time_limit;
 	int node_limit = MAX_NODES;
 	double focal_w = 1.0;

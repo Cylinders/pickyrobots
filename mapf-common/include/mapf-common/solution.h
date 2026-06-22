@@ -11,6 +11,8 @@ namespace mapf {
         std::string map;
         std::string scenario;
         std::string algo;
+        double time; // if time == -1, the algorithm did not compute the solution in the time limit.
+        bool completed;
         std::vector<std::optional<AgentSolution>> agent_solutions;
     };
 }

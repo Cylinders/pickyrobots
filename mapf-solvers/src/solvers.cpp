@@ -1,18 +1,23 @@
 #include <string>
 #include <cbsh_adapter.h>
 #include <bcp_adapter.h>
+#include "mapf-common/solution.h"
 
-bool cbs_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
+
+mapf::Solution cbs_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
     return mapf_solvers::cbsh::cbs_solve(mapFilePath, scenFilePath, n);
 }
 
-bool cbsh_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
+mapf::Solution cbsh_solve(const std::string &mapFilePath, const std::string &scenFilePath, const int n) {
     return mapf_solvers::cbsh::cbsh_solve(mapFilePath, scenFilePath, n);
 }
 
-std::string bcp_solve(const int t, const std::string& input) {
+mapf::Solution bcp_solve(const int t, const std::string& input) {
     return mapf_solvers::bcp::bcp_solve(t, input);
 }
+
+
+
 
 // // ALGORITHM 3: MDD SAT
 //

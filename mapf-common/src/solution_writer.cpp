@@ -1,5 +1,5 @@
 #include <fstream>
-#include <mapf_common/solution_writer.h>
+#include <mapf-common/solution_writer.h>
 
 namespace {
     void write_agent_solution(std::ostream &out, const std::optional<mapf::AgentSolution> &solution) {
