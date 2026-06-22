@@ -7,10 +7,10 @@
 #include "manifest.h"
 #include "mapfaster_encoder.h"
 #include "mapfaster_valuation.h"
-#include "mapf_common/map_reader.h"
-#include "mapf_common/scenario_reader.h"
-#include "mapf_common/solution.h"
-#include "mapf_common/solution_writer.h"
+#include "mapf-common/map_reader.h"
+#include "mapf-common/scenario_reader.h"
+#include "mapf-common/solution.h"
+#include "mapf-common/solution_writer.h"
 
 std::unordered_map<mapf::Agent, std::vector<mapf::Pos> > find_minimal_paths(
     const mapf::Grid &grid, const std::vector<mapf::Agent> &agents);
@@ -50,11 +50,11 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
         std::cout << "starting cbs\n";
         {
             auto start = std::chrono::steady_clock::now();
-            auto solved = cbs_solve(problem.map, scenario_path, scenario.size());
+            mapf::Solution solved = cbs_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-            if (!solved) { out << "CBS failed." << std::endl; } else {
+            if (!solved.completed) { out << "CBS failed." << std::endl; } else {
                 out << "CBS took " << elapsed_ms << " ms" << std::endl;
             }
         }
@@ -63,11 +63,11 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
         std::cout << "starting cbsh\n";
         {
             auto start = std::chrono::steady_clock::now();
-            auto solved = cbsh_solve(problem.map, scenario_path, scenario.size());
+            mapf::Solution solved = cbsh_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-            if (!solved) { out << "CBSH failed." << std::endl; } else {
+            if (!solved.completed) { out << "CBSH failed." << std::endl; } else {
                 out << "CBSH took " << elapsed_ms << " ms" << std::endl;
             }
         }
@@ -79,13 +79,13 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             scip_tmp_copy(problem.map, scenario_path);
 
             auto start = std::chrono::steady_clock::now();
-            auto output = bcp_solve(60, std::filesystem::absolute(tmp / scenario_path.filename()));
+            mapf::Solution output = bcp_solve(60, std::filesystem::absolute(tmp / scenario_path.filename()));
             auto end = std::chrono::steady_clock::now();
 
             scip_tmp_clear();
 
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-            if (output == "-\n") {
+            if (!output.completed) {
                 out << "BCP failed." << std::endl;
             } else {
                 out << "BCP took " << elapsed_ms << " ms" << std::endl;
