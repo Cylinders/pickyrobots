@@ -10,3 +10,6 @@ __pycache__/
 *.zip
 output
 *.bin
+*.sol
+*.txt
+

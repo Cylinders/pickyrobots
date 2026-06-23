@@ -8,6 +8,7 @@
 #include "SpaceTimeAStar.h"
 #include "mapf_common/solution.h"
 #include <string>
+#include <iostream>
 
 // takes the paths_found_initially and UPDATE all (constrained) paths found for agents from curr to start
 // also, do the same for ll_min_f_vals and paths_costs (since its already "on the way").
@@ -694,36 +695,15 @@ void CBS::savePaths(const string &fileName) const
     output.close();
 }
 
-std::string CBS::writePaths() const
-{
-    std::stringstream output;
 
-    for (int i = 0; i < num_of_agents; i++)
-    {
-        // Notice we use << exactly like you did with ofstream
-        output << "Agent " << i << ": ";
-        for (const auto & t : *paths[i])
-            output << "(" << search_engines[0]->instance.getRowCoordinate(t.location)
-                   << "," << search_engines[0]->instance.getColCoordinate(t.location) << ")->";
-        output << std::endl;
-    }
 
-    // Convert the stream to a standard string and return it
-    return output.str();
-}
-
-mapf::Solution CBS::returnPaths(std::string mapName, std::string scenario, std::string algo, bool completed, double runtime) const
+mapf::Solution CBS::returnSolution(bool completed) const
 {
     mapf::Solution returnVal;
-    returnVal.map = std::move(mapName);
-    returnVal.scenario = std::move(scenario);
-    returnVal.algo = std::move(algo);
-    returnVal.time = -1.0;
     returnVal.completed = completed;
 
-    if (!completed) {
+    if (completed) {
         returnVal.agent_solutions.resize(num_of_agents);
-
             for (int i = 0; i < num_of_agents; i++)
             {
                 if (paths[i] != nullptr)

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MAPF_SOLVER_ADAPTERS_H
 #define MAPF_SOLVER_ADAPTERS_H
 

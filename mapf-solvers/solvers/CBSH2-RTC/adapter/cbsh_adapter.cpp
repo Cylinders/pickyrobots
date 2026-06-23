@@ -12,7 +12,7 @@ namespace {
                                 const std::string &mapFilePath, const std::string &scenFilePath, int n, const std::string &algo) {
         // Other solver configurations
         int agentNum = 0; // 0 reads all agents from the file
-        double cutoffTime = 60.0; // seconds
+        double cutoffTime = 300.0; // seconds
         int screenOption = 0; // 0: none, 1: results, 2: all
         int seed = 0;
         int restartRuns = 1;
@@ -50,8 +50,9 @@ namespace {
         }
         cbs.runtime = runtime;
         cbs.clearSearchEngines();
+        std::cout << "SOLUTION: ";
 
-        return cbs.returnPaths(mapFilePath, scenFilePath, algo, solved, runtime);
+        return cbs.returnSolution(solved);
     }
 
 }

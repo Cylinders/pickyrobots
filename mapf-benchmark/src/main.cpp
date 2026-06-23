@@ -27,7 +27,6 @@ void scip_tmp_copy(const std::filesystem::path &f1, const std::filesystem::path 
 
 void scip_tmp_clear();
 
-
 void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &problem) {
     std::ofstream out(output / (problem.id + ".txt"));
 
@@ -38,6 +37,10 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
     // Create a mutex to protect our output streams
     std::mutex io_mutex;
 
+    // Ensure the solutions directory exists
+    std::filesystem::path solutions_dir = "../solutions";
+    std::filesystem::create_directories(solutions_dir);
+
     for (const auto &scenario_path: problem.scenarios) {
         std::cout << "map: " << problem.map << ", scenario: " << scenario_path << std::endl;
         out << "scenario: " << scenario_path << std::endl;
@@ -45,13 +48,22 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
         const std::vector<mapf::Agent> scenario = mapf::reader::read_scenario(scenario_path);
         const auto paths = find_minimal_paths(map, scenario);
 
+        // --- MAPFASTER VALUATOR TIMING ---
+        auto val_start = std::chrono::steady_clock::now();
         auto valuation = valuator.evaluate({map, scenario, paths});
+        auto val_end = std::chrono::steady_clock::now();
+        auto val_elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(val_end - val_start).count();
+
+        out << "MAPFASTER: " << val_elapsed_ms << " ms" << std::endl;
 
         for (auto [solver, weight]: valuation) {
             out << to_string(solver) << ":" << weight << "" << std::endl;
         }
 
         // --- MULTITHREADING SECTION ---
+
+        // Start timer for ALL threads
+        auto threads_start = std::chrono::steady_clock::now();
 
         // 1. CBS Thread
         std::thread t_cbs([&]() {
@@ -63,7 +75,15 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             auto start = std::chrono::steady_clock::now();
             mapf::Solution solved = cbs_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
+            solved.map = problem.map;
+            solved.scenario = scenario_path;
+            solved.algo = "CBS";
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            // solved.time = elapsed_ms;
+            // Write solution to file unconditionally
+            std::string sol_filename = scenario_path.stem().string() + "_cbs.sol";
+            std::ofstream sol_out(solutions_dir / sol_filename);
+            mapf::writer::write_solution(sol_out, solved);
 
             {
                 std::lock_guard<std::mutex> lock(io_mutex);
@@ -82,7 +102,16 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             auto start = std::chrono::steady_clock::now();
             mapf::Solution solved = cbsh_solve(problem.map, scenario_path, scenario.size());
             auto end = std::chrono::steady_clock::now();
+            solved.map = problem.map;
+            solved.scenario = scenario_path;
+            solved.algo = "CBSH";
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            // solved.time = elapsed_ms;
+
+            // Write solution to file unconditionally
+            std::string sol_filename = scenario_path.stem().string() + "_cbsh.sol";
+            std::ofstream sol_out(solutions_dir / sol_filename);
+            mapf::writer::write_solution(sol_out, solved);
 
             {
                 std::lock_guard<std::mutex> lock(io_mutex);
@@ -101,16 +130,21 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             scip_tmp_copy(problem.map, scenario_path);
 
             auto start = std::chrono::steady_clock::now();
-            mapf::Solution output = bcp_solve(60, std::filesystem::absolute(tmp / scenario_path.filename()));
+            mapf::Solution solved = bcp_solve(60, std::filesystem::absolute(tmp / scenario_path.filename()));
             auto end = std::chrono::steady_clock::now();
-
-            scip_tmp_clear();
-
+            solved.map = problem.map;
+            solved.scenario = scenario_path;
+            solved.algo = "BCP";
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            // solved.time = elapsed_ms;
+            // Write solution to file unconditionally
+            std::string sol_filename = scenario_path.stem().string() + "_bcp.sol";
+            std::ofstream sol_out(solutions_dir / sol_filename);
+            mapf::writer::write_solution(sol_out, solved);
 
             {
                 std::lock_guard<std::mutex> lock(io_mutex);
-                if (!output.completed) { out << "BCP failed." << std::endl; }
+                if (!solved.completed) { out << "BCP failed." << std::endl; }
                 else { out << "BCP took " << elapsed_ms << " ms" << std::endl; }
             }
         });
@@ -121,6 +155,12 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
         if (t_cbs.joinable()) t_cbs.join();
         if (t_cbsh.joinable()) t_cbsh.join();
         if (t_bcp.joinable()) t_bcp.join();
+
+        // End timer for ALL threads and output to file
+        auto threads_end = std::chrono::steady_clock::now();
+        auto threads_elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(threads_end - threads_start).count();
+
+        out << "ALL took " << threads_elapsed_ms << " ms" << std::endl;
     }
 
     out.close();

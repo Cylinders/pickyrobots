@@ -47,7 +47,7 @@ mapf::Solution write_best_solution(
     // Initialize base MAPF Solution data.
     mapf_sol.agent_solutions.assign(N, std::nullopt);
     mapf_sol.completed = false;
-    mapf_sol.time = SCIPgetSolvingTime(scip);
+    mapf_sol.time = SCIPgetSolvingTime(scip) * 1000.0;
 
     // Get variables.
     const auto& dummy_vars = SCIPprobdataGetDummyVars(probdata);
@@ -140,13 +140,17 @@ mapf::Solution write_best_solution(
                 mapf_sol.agent_solutions[a] = std::move(current_agent_path);
 
                 // Move to next agent.
-                release_assert(!found, "Agent {} is using more than one path", a);
+                //
+                if (!found) {
+                    mapf_sol.completed = false;
+                    return mapf_sol;
+                }
+
                 found = true;
-                break;
             }
         }
-        release_assert(found, "Agent {} has no path in the solution", a);
     }
 
+    mapf_sol.completed = true;
     return mapf_sol;
 }

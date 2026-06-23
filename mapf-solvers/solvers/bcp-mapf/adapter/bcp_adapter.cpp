@@ -13,70 +13,128 @@
 #include "mapf_common/solution.h"
 namespace {
     SCIP_RETCODE bcp_start_solver(
-        int argc, // Number of shell parameters
-        char **argv, // Array with shell parameters
-        mapf::Solution &outputVal // OUT parameter to hold the solution string
+        int argc,
+        char **argv,
+        mapf::Solution &outputVal
     ) {
         // Parse program options.
         std::string instance_file;
         Agent agent_limit = -1;
-        SCIP_Real time_limit = 0;
+        SCIP_Real time_limit = 300;
         SCIP_Longint node_limit = 0;
         SCIP_Real gap_limit = 0;
         try {
-            // Create program options.
-            cxxopts::Options options(argv[0],
-                                     "BCP-MAPF - branch-and-cut-and-price for multi-agent path finding");
-            options.positional_help("instance_file").show_positional_help();
-            options.add_options()
-                    ("help", "Print help")
-                    ("f,file", "Path to instance file", cxxopts::value<String>())
-                    ("a,agent-limit", "Read the first several agents only", cxxopts::value<Agent>())
-                    ("t,time-limit", "Time limit in seconds", cxxopts::value<SCIP_Real>())
-                    ("n,node-limit", "Maximum number of branch-and-bound nodes", cxxopts::value<SCIP_Longint>())
-                    ("g,gap-limit", "Solve to an optimality gap", cxxopts::value<SCIP_Real>());
-            options.parse_positional({"file"});
+                    // Create program options.
+                    cxxopts::Options options(argv[0],
+                                             "BCP-MAPF - branch-and-cut-and-price for multi-agent path finding");
+                    options.positional_help("instance_file").show_positional_help();
+                    options.add_options()
+                            ("help", "Print help")
+                            ("f,file", "Path to instance file", cxxopts::value<String>())
+                            ("a,agent-limit", "Read the first several agents only", cxxopts::value<Agent>())
+                            ("t,time-limit", "Time limit in seconds", cxxopts::value<SCIP_Real>())
+                            ("n,node-limit", "Maximum number of branch-and-bound nodes", cxxopts::value<SCIP_Longint>())
+                            ("g,gap-limit", "Solve to an optimality gap", cxxopts::value<SCIP_Real>());
+                    options.parse_positional({"file"});
 
-            // Parse options.
-            auto result = options.parse(argc, argv);
+                    // Parse options.
+                    auto result = options.parse(argc, argv);
 
-            // Print help.
-            if (result.count("help") || !result.count("file")) {
-                println("{}", options.help());
-                exit(0);
-            }
+                    // Print help.
+                    if (result.count("help") || !result.count("file")) {
+                        println("{}", options.help());
+                        exit(0);
+                    }
 
-            // Get path to instance.
-            if (result.count("file")) {
-                instance_file = result["file"].as<String>();
-            }
+                    // Get path to instance.
+                    if (result.count("file")) {
+                        instance_file = result["file"].as<String>();
+                    }
 
-            // Get agent limit.
-            if (result.count("agent-limit")) {
-                agent_limit = result["agent-limit"].as<Agent>();
-            }
+                    // Get agent limit.
+                    if (result.count("agent-limit")) {
+                        agent_limit = result["agent-limit"].as<Agent>();
+                    }
 
-            // Get time limit.
-            if (result.count("time-limit")) {
-                time_limit = result["time-limit"].as<SCIP_Real>();
-            }
+                    // Get time limit.
+                    if (result.count("time-limit")) {
+                        time_limit = result["time-limit"].as<SCIP_Real>();
+                    }
 
-            // Get node limit.
-            if (result.count("node-limit")) {
-                node_limit = result["node-limit"].as<SCIP_Longint>();
-            }
+                    // Get node limit.
+                    if (result.count("node-limit")) {
+                        node_limit = result["node-limit"].as<SCIP_Longint>();
+                    }
 
-            // Get optimality gap limit.
-            if (result.count("gap-limit")) {
-                gap_limit = result["gap-limit"].as<SCIP_Real>();
-            }
-        } catch (const cxxopts::exceptions::exception &e) {
-            err("{}", e.what());
-        }
+                    // Get optimality gap limit.
+                    if (result.count("gap-limit")) {
+                        gap_limit = result["gap-limit"].as<SCIP_Real>();
+                    }
+                } catch (const cxxopts::exceptions::exception &e) {
+                    err("{}", e.what());
+                }
 
-        // Print.
+                // Print.
+                println("Branch-and-cut-and-price for multi-agent path finding");
+                println("Edward Lam <ed@ed-lam.com>");
+                println("Monash University, Melbourne, Australia");
+        #ifdef DEBUG
+                println("Compiled in debug mode");
+        #ifdef USE_WAITEDGE_CONFLICTS
+                println("Using wait-edge conflict constraints");
+        #endif
+        #ifdef USE_RECTANGLE_KNAPSACK_CONFLICTS
+                println("Using rectangle knapsack conflict constraints");
+        #endif
+        #if !defined(USE_WAITCORRIDOR_CONFLICTS) && defined(USE_CORRIDOR_CONFLICTS)
+                println("Using corridor conflict constraints");
+        #endif
+        #ifdef USE_WAITCORRIDOR_CONFLICTS
+                println("Using wait corridor conflict constraints");
+        #endif
+        #ifdef USE_STEPASIDE_CONFLICTS
+                println("Using step aside conflict constraints");
+        #endif
+        #ifdef USE_WAITDELAY_CONFLICTS
+                println("Using wait delay conflict constraints");
+        #endif
+        #ifdef USE_EXITENTRY_CONFLICTS
+                println("Using exit entry conflict constraints");
+        #endif
+        #if !defined(USE_WAITTWOEDGE_CONFLICTS) && defined(USE_TWOEDGE_CONFLICTS)
+                println("Using two edge conflict constraints");
+        #endif
+        #ifdef USE_WAITTWOEDGE_CONFLICTS
+                println("Using wait two edge conflict constraints");
+        #endif
+        #ifdef USE_AGENTWAITEDGE_CONFLICTS
+                println("Using agent wait edge conflict constraints");
+        #endif
+        #ifdef USE_TWOVERTEX_CONFLICTS
+                println("Using two vertex conflict constraints");
+        #endif
+        #ifdef USE_THREEVERTEX_CONFLICTS
+                println("Using three vertex conflict constraints");
+        #endif
+        #ifdef USE_FOUREDGE_CONFLICTS
+                println("Using four edge conflict constraints");
+        #endif
+        #ifdef USE_FIVEEDGE_CONFLICTS
+                println("Using five edge conflict constraints");
+        #endif
+        #ifdef USE_SIXEDGE_CONFLICTS
+                println("Using six edge conflict constraints");
+        #endif
+        #ifdef USE_VERTEX_FOUREDGE_CONFLICTS
+                println("Using vertex four edge conflict constraints");
+        #endif
+        #ifdef USE_GOAL_CONFLICTS
+                println("Using goal conflict constraints");
+        #endif
+        #endif
+                println("");
 
-        // Initialize SCIP.
+                // Initialize SCIP.
         SCIP *scip = nullptr;
         SCIP_CALL(SCIPcreate(&scip));
 
@@ -274,21 +332,17 @@ namespace {
             SCIP_CALL(SCIPsetRealParam(scip, "limits/gap", gap_limit));
         }
 
-        // Solve.
         SCIP_CALL(SCIPsolve(scip));
 
-        // Output.
         {
             // Print.
             SCIP_CALL(SCIPprintStatistics(scip, nullptr));
 
-            // Write best solution to the string reference provided by the caller
             write_best_solution(scip, outputVal);
         }
 
         // Free memory.
         SCIP_CALL(SCIPfree(&scip));
-        // Check if memory is leaked.
         BMScheckEmptyMemory();
 
         // Done.
@@ -303,6 +357,7 @@ namespace {
 
         // Optional: If you want to check for errors, you can inspect 'retcode' here.
         if (retcode != SCIP_OKAY) {
+            std::cout << "SCIPERROR";
             std::cerr << "error SCIP";
         }
 
