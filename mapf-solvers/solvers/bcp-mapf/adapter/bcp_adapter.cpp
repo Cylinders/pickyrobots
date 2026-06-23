@@ -75,64 +75,6 @@ namespace {
         }
 
         // Print.
-        println("Branch-and-cut-and-price for multi-agent path finding");
-        println("Edward Lam <ed@ed-lam.com>");
-        println("Monash University, Melbourne, Australia");
-#ifdef DEBUG
-        println("Compiled in debug mode");
-#ifdef USE_WAITEDGE_CONFLICTS
-        println("Using wait-edge conflict constraints");
-#endif
-#ifdef USE_RECTANGLE_KNAPSACK_CONFLICTS
-        println("Using rectangle knapsack conflict constraints");
-#endif
-#if !defined(USE_WAITCORRIDOR_CONFLICTS) && defined(USE_CORRIDOR_CONFLICTS)
-        println("Using corridor conflict constraints");
-#endif
-#ifdef USE_WAITCORRIDOR_CONFLICTS
-        println("Using wait corridor conflict constraints");
-#endif
-#ifdef USE_STEPASIDE_CONFLICTS
-        println("Using step aside conflict constraints");
-#endif
-#ifdef USE_WAITDELAY_CONFLICTS
-        println("Using wait delay conflict constraints");
-#endif
-#ifdef USE_EXITENTRY_CONFLICTS
-        println("Using exit entry conflict constraints");
-#endif
-#if !defined(USE_WAITTWOEDGE_CONFLICTS) && defined(USE_TWOEDGE_CONFLICTS)
-        println("Using two edge conflict constraints");
-#endif
-#ifdef USE_WAITTWOEDGE_CONFLICTS
-        println("Using wait two edge conflict constraints");
-#endif
-#ifdef USE_AGENTWAITEDGE_CONFLICTS
-        println("Using agent wait edge conflict constraints");
-#endif
-#ifdef USE_TWOVERTEX_CONFLICTS
-        println("Using two vertex conflict constraints");
-#endif
-#ifdef USE_THREEVERTEX_CONFLICTS
-        println("Using three vertex conflict constraints");
-#endif
-#ifdef USE_FOUREDGE_CONFLICTS
-        println("Using four edge conflict constraints");
-#endif
-#ifdef USE_FIVEEDGE_CONFLICTS
-        println("Using five edge conflict constraints");
-#endif
-#ifdef USE_SIXEDGE_CONFLICTS
-        println("Using six edge conflict constraints");
-#endif
-#ifdef USE_VERTEX_FOUREDGE_CONFLICTS
-        println("Using vertex four edge conflict constraints");
-#endif
-#ifdef USE_GOAL_CONFLICTS
-        println("Using goal conflict constraints");
-#endif
-#endif
-        println("");
 
         // Initialize SCIP.
         SCIP *scip = nullptr;
