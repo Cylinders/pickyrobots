@@ -79,7 +79,7 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             solved.scenario = scenario_path;
             solved.algo = "CBS";
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-            // solved.time = elapsed_ms;
+            solved.time = elapsed_ms;
             // Write solution to file unconditionally
             std::string sol_filename = scenario_path.stem().string() + "_cbs.sol";
             std::ofstream sol_out(solutions_dir / sol_filename);
@@ -106,7 +106,7 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             solved.scenario = scenario_path;
             solved.algo = "CBSH";
             auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-            // solved.time = elapsed_ms;
+            solved.time = elapsed_ms;
 
             // Write solution to file unconditionally
             std::string sol_filename = scenario_path.stem().string() + "_cbsh.sol";
@@ -132,6 +132,8 @@ void benchmark_problem(MapfasterValuation &valuator, const ManifestProblem &prob
             auto start = std::chrono::steady_clock::now();
             mapf::Solution solved = bcp_solve(60, std::filesystem::absolute(tmp / scenario_path.filename()));
             auto end = std::chrono::steady_clock::now();
+            scip_tmp_clear();
+
             solved.map = problem.map;
             solved.scenario = scenario_path;
             solved.algo = "BCP";

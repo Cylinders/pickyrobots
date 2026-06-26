@@ -40,19 +40,18 @@ namespace {
         double runtime = 0;
         int min_f_val = 0;
         bool solved;
-        for (int i = 0; i < restartRuns; i++) {
-            cbs.clear();
-            solved = cbs.solve(cutoffTime, min_f_val);
-            runtime += cbs.runtime;
-            if (cbs.solution_found) break;
-            min_f_val = (int) cbs.min_f_val;
-            cbs.randomRoot = true;
-        }
+        //for (int i = 0; i < restartRuns; i++) {
+        std::cout << " solving CBS H or CBS";
+        solved = cbs.solve(cutoffTime, min_f_val);
+        runtime += cbs.runtime;
+        // if (cbs.solution_found) break;
+        min_f_val = (int) cbs.min_f_val;
+        cbs.randomRoot = true;
+            //}
         cbs.runtime = runtime;
+        mapf::Solution returnVal = cbs.returnSolution(solved);
         cbs.clearSearchEngines();
-        std::cout << "SOLUTION: ";
-
-        return cbs.returnSolution(solved);
+        return returnVal;
     }
 
 }
