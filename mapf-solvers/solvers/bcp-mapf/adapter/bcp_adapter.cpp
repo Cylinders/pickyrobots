@@ -352,7 +352,6 @@ namespace {
     mapf::Solution bcp_returnSol(int argc, char **argv) {
         mapf::Solution returnSol;
 
-        // Pass returnString by reference so start_solver can populate it
         SCIP_RETCODE retcode = bcp_start_solver(argc, argv, returnSol);
 
         // Optional: If you want to check for errors, you can inspect 'retcode' here.

@@ -4,12 +4,10 @@ dump/
 __pycache__/
 .vscode/
 .idea/
-*.map
-*.scen
+./mapf-benchmark/build-release/
 *.deb
 *.zip
 output
 *.bin
 *.sol
 *.txt
-

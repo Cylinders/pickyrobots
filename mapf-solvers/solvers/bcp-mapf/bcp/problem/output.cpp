@@ -28,28 +28,23 @@ Author: Edward Lam <ed@ed-lam.com>
 #include <vector>
 #include "mapf_common/solution.h"
 
-// Make sure your mapf:: headers are included
-// #include "solution.h"
-// #include "pos.h"
 
 mapf::Solution write_best_solution(
     SCIP* scip,
     mapf::Solution& mapf_sol
 )
 {
-    // Check.
     debug_assert(scip);
 
-    // Get problem data.
     auto probdata = SCIPgetProbData(scip);
     const auto N = SCIPprobdataGetN(probdata);
 
-    // Initialize base MAPF Solution data.
+    const auto& map = SCIPprobdataGetMap(probdata);
+
     mapf_sol.agent_solutions.assign(N, std::nullopt);
     mapf_sol.completed = false;
     mapf_sol.time = SCIPgetSolvingTime(scip) * 1000.0;
 
-    // Get variables.
     const auto& dummy_vars = SCIPprobdataGetDummyVars(probdata);
     const auto& agent_vars = SCIPprobdataGetAgentVars(probdata);
 
@@ -60,19 +55,16 @@ mapf::Solution write_best_solution(
     if (!sol)
     {
         mapf_sol.completed = false;
+        return mapf_sol;
     }
 
-    // Exit if no solution within objective limit is found.
     obj = SCIPgetSolOrigObj(scip, sol);
     if (obj >= ARTIFICIAL_VAR_COST)
     {
         mapf_sol.completed = false;
+        return mapf_sol;
     }
 
-    // Note: This helper function might still print to standard output internally.
-    print_used_paths(scip, sol);
-
-    // Check if dummy variables are used.
     for (Agent a = 0; a < N; ++a)
     {
         auto var = dummy_vars[a];
@@ -82,72 +74,50 @@ mapf::Solution write_best_solution(
         const auto var_val = SCIPgetSolVal(scip, sol, var);
     }
 
-    // If we pass the dummy variable check, we have a complete and valid solution.
-    mapf_sol.completed = true;
-
-    // Initialize the output string with the objective value.
-    std::string output_str = fmt::format("{:.0f}\n\n", SCIPround(scip, obj));
-
-    // Append paths to the string and populate the mapf::Solution object.
+    // Extract the actual paths
     for (Agent a = 0; a < N; ++a)
     {
         bool found = false;
+
         for (const auto& [var, _] : agent_vars[a])
         {
             debug_assert(var);
 
             const auto var_val = SCIPgetSolVal(scip, sol, var);
+
             if (SCIPisPositive(scip, var_val))
             {
                 auto vardata = SCIPvarGetData(var);
                 const auto path_length = SCIPvardataGetPathLength(vardata);
                 const auto path = SCIPvardataGetPath(vardata);
 
-                // 1. Get the path as a string (e.g., "(28,4) (28,5) (28,6)")
-                std::string path_str = format_path(probdata, path_length, path);
-
-                // 2. Append the specific agent's path to our output string.
-                output_str += fmt::format("Agent {}, cost {:.0f}, path {}\n",
-                                          a,
-                                          SCIPround(scip, SCIPvarGetObj(var)),
-                                          path_str);
-
-                // 3. Parse the string to populate mapf_sol
                 mapf::AgentSolution current_agent_path;
                 current_agent_path.reserve(path_length);
 
-                size_t pos = 0;
-                while ((pos = path_str.find('(', pos)) != std::string::npos)
+                for (int t = 0; t < path_length; ++t)
                 {
-                    size_t comma = path_str.find(',', pos);
-                    size_t end_paren = path_str.find(')', comma);
+                    const auto e = path[t];
+                    auto [x, y] = map.get_xy(e.n);
 
-                    if (comma != std::string::npos && end_paren != std::string::npos)
-                    {
-                        // Extract the row and col substrings and convert to integers
-                        int r = std::stoi(path_str.substr(pos + 1, comma - pos - 1));
-                        int c = std::stoi(path_str.substr(comma + 1, end_paren - comma - 1));
+#ifdef REMOVE_PADDING
+                    --x;
+                    --y;
+#endif
 
-                        current_agent_path.push_back({r, c});
-                        pos = end_paren + 1; // Move past the current coordinate
-                    }
-                    else
-                    {
-                        break; // Malformed string, stop parsing
-                    }
+                    current_agent_path.push_back({x, y});
                 }
 
                 mapf_sol.agent_solutions[a] = std::move(current_agent_path);
-
-                // Move to next agent.
-                //
-                if (!found) {
-                    mapf_sol.completed = false;
-                    return mapf_sol;
-                }
-
                 found = true;
+
+                break;
             }
+        }
+
+        if (!found)
+        {
+            mapf_sol.completed = false;
+            return mapf_sol;
         }
     }
 
